@@ -21,30 +21,29 @@ func usage() {
 
 func main() {
 	options := []string{"run", "child-mode", "setup-netns", "setup-veth", "ps", "exec", "images", "rmi"}
-
+	// 如果所有参数个数少于2 或 第一个参数不符合规定类型
 	if len(os.Args) < 2 || !stringInSlice(os.Args[1], options) {
 		usage()
 		os.Exit(1)
 	}
 	rand.Seed(time.Now().UnixNano())
-
-	/* We chroot and write to privileged directories. We need to be root */
+	// 检查系统权限, 要求必须为root
 	if os.Geteuid() != 0 {
 		log.Fatal("You need root privileges to run this program.")
 	}
-
-	/* Create the directories we require */
+	// 创建要求的目录
 	if err := initGockerDirs(); err != nil {
 		log.Fatalf("Unable to create requisite directories: %v", err)
 	}
 
 	log.Printf("Cmd args: %v\n", os.Args)
-
+	// 判断第一个参数的类型
 	switch os.Args[1] {
 	case "run":
 		fs := flag.FlagSet{}
 		fs.ParseErrorsWhitelist.UnknownFlags = true
 
+		// 将在"gocker run"后的参数读取到CommandLine的formal属性中, 完成参数的调用过程
 		mem := fs.Int("mem", -1, "Max RAM to allow in MB")
 		swap := fs.Int("swap", -1, "Max swap to allow in MB")
 		pids := fs.Int("pids", -1, "Number of max processes to allow")

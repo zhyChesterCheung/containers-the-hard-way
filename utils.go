@@ -47,6 +47,7 @@ func createDirsIfDontExist(dirs []string) error {
 	return nil
 }
 
+// initGockerDirs 创建我们要求的目录
 func initGockerDirs() (err error) {
 	dirs := []string {gockerHomePath, gockerTempPath, gockerImagesPath, gockerContainersPath}
 	return createDirsIfDontExist(dirs)
